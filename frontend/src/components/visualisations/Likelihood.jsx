@@ -5,13 +5,10 @@ const LikelihoodChart = ({ data }) => {
   const svgRef = useRef();
 
   useEffect(() => {
-    // Clear previous render
     d3.select(svgRef.current).selectAll('*').remove();
 
-    // Filter data
     const filteredData = data.filter(d => d.start_year && d.likelihood !== undefined);
 
-    // Set up SVG dimensions
     const svg = d3.select(svgRef.current)
       .attr('width', 700)
       .attr('height', 450)
@@ -24,7 +21,6 @@ const LikelihoodChart = ({ data }) => {
     const width = svg.node().getBoundingClientRect().width - margin.left - margin.right;
     const height = svg.node().getBoundingClientRect().height - margin.top - margin.bottom;
 
-    // Scale functions
     const x = d3.scaleLinear()
       .domain([d3.min(filteredData, d => d.start_year), d3.max(filteredData, d => d.start_year)])
       .range([0, width]);
@@ -33,17 +29,14 @@ const LikelihoodChart = ({ data }) => {
       .domain([0, d3.max(filteredData, d => d.likelihood)])
       .range([height, 0]);
 
-    // Main chart group
     const chart = svg.append('g')
       .attr('transform', `translate(${margin.left},${margin.top})`);
 
-    // Line function
     const line = d3.line()
       .x(d => x(d.start_year))
       .y(d => y(d.likelihood))
       .curve(d3.curveMonotoneX);
 
-    // Add line path
     chart.append('path')
       .data([filteredData])
       .attr('d', line)
@@ -55,7 +48,6 @@ const LikelihoodChart = ({ data }) => {
       .duration(1200)
       .style('opacity', 1);
 
-    // Circles (dots)
     chart.append('g')
       .selectAll('.dot')
       .data(filteredData)
@@ -68,7 +60,6 @@ const LikelihoodChart = ({ data }) => {
       .duration(800)
       .attr('r', 7);
 
-    // X-axis
     chart.append('g')
       .attr('transform', `translate(0,${height})`)
       .call(d3.axisBottom(x).ticks(6).tickFormat(d3.format('d')))
@@ -77,7 +68,6 @@ const LikelihoodChart = ({ data }) => {
       .style('font-weight', 'bold')
       .style('fill', '#444');
 
-    // Y-axis
     chart.append('g')
       .call(d3.axisLeft(y).ticks(6))
       .selectAll('text')
@@ -85,7 +75,6 @@ const LikelihoodChart = ({ data }) => {
       .style('font-weight', 'bold')
       .style('fill', '#444');
 
-    // Titles
     svg.append('text')
       .attr('x', width / 2 + margin.left)
       .attr('y', margin.top / 2)

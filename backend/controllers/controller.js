@@ -5,8 +5,6 @@ export const PostData = async (req, res) => {
         end_year, intensity, sector, topic, insight, url, region, start_year, 
         impact, added, published, country, relevance, pestle, source, title, likelihood 
       } = req.body;
-  
-      // Parse dates if they are provided and valid
       const parsedAdded = added && !isNaN(Date.parse(added)) ? new Date(added) : null;
       const parsedPublished = published && !isNaN(Date.parse(published)) ? new Date(published) : null;
   

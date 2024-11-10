@@ -10,33 +10,27 @@ const RegionChart = ({ data }) => {
     const margin = 40;
     const radius = Math.min(width, height) / 2 - margin;
 
-    // Clear any previous SVG elements
     d3.select(svgRef.current).selectAll('*').remove();
 
-    // Group data by sector and sum intensity within each sector
     const sectorData = Array.from(
       d3.group(data, d => d.sector),
       ([key, values]) => ({ sector: key, intensity: d3.sum(values, v => v.intensity) })
     );
 
-    // Set up color scale
     const color = d3.scaleOrdinal()
       .domain(sectorData.map(d => d.sector))
       .range(d3.schemeCategory10);
 
-    // Create SVG container
     const svg = d3.select(svgRef.current)
       .attr('width', width)
       .attr('height', height)
       .append('g')
       .attr('transform', `translate(${width / 2}, ${height / 2})`);
 
-    // Create the pie and arc generators
     const pie = d3.pie().value(d => d.intensity);
     const arc = d3.arc().innerRadius(radius - 100).outerRadius(radius);
     const arcHover = d3.arc().innerRadius(radius - 100).outerRadius(radius + 10);
 
-    // Bind data to pie chart and create arcs with growing animation
     svg.selectAll('path')
       .data(pie(sectorData))
       .enter()
@@ -54,24 +48,22 @@ const RegionChart = ({ data }) => {
         };
       });
 
-    // Hover effect for each slice
     svg.selectAll('path')
       .on('mouseover', function(event, d) {
         d3.select(this)
           .transition()
           .duration(200)
-          .attr('d', arcHover)  // Expand the slice on hover
+          .attr('d', arcHover)  
           .style('opacity', 0.8);
       })
       .on('mouseout', function(event, d) {
         d3.select(this)
           .transition()
           .duration(200)
-          .attr('d', arc)  // Revert to original size
+          .attr('d', arc)  
           .style('opacity', 1);
       });
 
-    // Add text labels for each slice with fade-in effect
     svg.selectAll('text')
       .data(pie(sectorData))
       .enter()
@@ -81,11 +73,11 @@ const RegionChart = ({ data }) => {
       .style('text-anchor', 'middle')
       .style('font-size', 12)
       .style('fill', 'white')
-      .style('opacity', 0) // Initial opacity is 0
+      .style('opacity', 0) 
       .transition()
       .delay(1000)
       .duration(500)
-      .style('opacity', 1); // Fade-in effect for labels
+      .style('opacity', 1); 
   }, [data]);
 
   return <svg ref={svgRef}></svg>;

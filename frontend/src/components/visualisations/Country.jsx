@@ -5,15 +5,12 @@ const CountryChart = ({ data }) => {
   const svgRef = useRef(null);
 
   useEffect(() => {
-    // Set up dimensions and margins
     const margin = { top: 20, right: 30, bottom: 40, left: 50 };
     const width = 600 - margin.left - margin.right;
     const height = 400 - margin.top - margin.bottom;
 
-    // Filter data to include only countries with an intensity value
     const countryData = data.filter(item => item.country && item.intensity);
 
-    // Create scales
     const xScale = d3.scaleBand()
       .domain(countryData.map(d => d.country))
       .range([0, width])
@@ -28,21 +25,17 @@ const CountryChart = ({ data }) => {
       .domain(countryData.map(d => d.country))
       .range(d3.schemeCategory10);
 
-    // Create SVG container
     const svg = d3.select(svgRef.current)
       .attr('width', width + margin.left + margin.right)
       .attr('height', height + margin.top + margin.bottom)
       .append('g')
       .attr('transform', `translate(${margin.left},${margin.top})`);
 
-    // Create area generator
     const area = d3.area()
       .x(d => xScale(d.country) + xScale.bandwidth() / 2)
       .y0(height)
       .y1(d => yScale(d.intensity))
-      .curve(d3.curveCatmullRom); // Smooth curve for aesthetic
-
-    // Append the area path with animation
+      .curve(d3.curveCatmullRom); 
     svg.append('path')
       .datum(countryData)
       .attr('fill', 'steelblue')
@@ -53,7 +46,6 @@ const CountryChart = ({ data }) => {
       .duration(1500)
       .attr('opacity', 0.7);
 
-    // Create axes
     svg.append('g')
       .attr('class', 'x-axis')
       .attr('transform', `translate(0,${height})`)

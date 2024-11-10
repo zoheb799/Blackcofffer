@@ -22,11 +22,9 @@ const TopicsBarChart = ({ data }) => {
     const y = d3.scaleLinear()
       .range([height, 0]);
 
-    // Assuming the data has the format: [{ topic: 'Topic 1', intensity: 30 }, ...]
     x.domain(data.map(d => d.topic));
     y.domain([0, d3.max(data, d => d.intensity)]);
 
-    // Add the bars
     svg.selectAll('.bar')
       .data(data)
       .enter().append('rect')
@@ -42,13 +40,11 @@ const TopicsBarChart = ({ data }) => {
       .attr('y', d => y(d.intensity))
       .attr('height', d => height - y(d.intensity));
 
-    // Add x-axis
     svg.append('g')
       .attr('class', 'x-axis')
       .attr('transform', `translate(0,${height})`)
       .call(d3.axisBottom(x));
 
-    // Add y-axis
     svg.append('g')
       .attr('class', 'y-axis')
       .call(d3.axisLeft(y));
