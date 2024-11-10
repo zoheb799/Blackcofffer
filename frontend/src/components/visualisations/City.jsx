@@ -1,79 +1,68 @@
 import React, { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 
-const CityPieChart = ({ data }) => {
+const CityIndex = ({ data }) => {
   const svgRef = useRef(null);
 
   useEffect(() => {
-    const width = 600;
-    const height = 400;
-    const radius = Math.min(width, height) / 2;
+    const margin = { top: 20, right: 30, bottom: 40, left: 40 };
+    const width = 600 - margin.left - margin.right;
+    const height = 400 - margin.top - margin.bottom;
 
-    // Set up the color scale
-    const color = d3.scaleOrdinal(d3.schemeCategory10);
+    d3.select(svgRef.current).selectAll("*").remove();
 
-    // Create the pie chart
-    const pie = d3.pie().value((d) => d.intensity);
-
-    // Set up the arc generator
-    const arc = d3.arc().outerRadius(radius - 10).innerRadius(0);
-
-    // Set up the label arc generator
-    const labelArc = d3.arc().outerRadius(radius).innerRadius(radius - 40);
-
-    // Create the SVG element
     const svg = d3.select(svgRef.current)
-      .attr('width', width)
-      .attr('height', height)
+      .attr('width', width + margin.left + margin.right)
+      .attr('height', height + margin.top + margin.bottom)
       .append('g')
-      .attr('transform', `translate(${width / 2}, ${height / 2})`);
+      .attr('transform', `translate(${margin.left},${margin.top})`);
 
-    // Process the city data
-    const cityData = data.filter(item => item.city).map(d => ({
-      city: d.city,
-      intensity: d.intensity,
-    }));
+    const x = d3.scaleBand()
+      .domain(data.map(d => d.end_year))
+      .range([0, width])
+      .padding(0.1);
 
-    const pieData = pie(cityData);
+    const y = d3.scaleLinear()
+      .domain([0, d3.max(data, d => d.intensity)])
+      .nice()
+      .range([height, 0]);
 
-    // Create the pie chart slices
-    const slices = svg
-      .selectAll('.arc')
-      .data(pieData)
+    svg.append('g')
+      .attr('class', 'x-axis')
+      .attr('transform', `translate(0,${height})`)
+      .call(d3.axisBottom(x));
+    svg.append('g')
+      .attr('class', 'y-axis')
+      .call(d3.axisLeft(y));
+
+    svg.selectAll('.bar')
+      .data(data)
       .enter()
-      .append('g')
-      .attr('class', 'arc');
-
-    // Add the pie chart path with animation
-    slices
-      .append('path')
-      .attr('d', arc)
-      .style('fill', (d, i) => color(i))
-      .attr('opacity', 0) // Initial opacity is set to 0 for animation
+      .append('rect')
+      .attr('class', 'bar')
+      .attr('x', d => x(d.end_year))
+      .attr('y', height) 
+      .attr('width', x.bandwidth())
+      .attr('height', 0)
+      .attr('fill', (d, i) => d3.schemeCategory10[i % 10])
       .transition()
-      .duration(1000) // Duration for the animation (1 second)
-      .attr('opacity', 1) // Set opacity to 1 to make the path visible
-      .attrTween('d', function (d) {
-        const i = d3.interpolate(
-          { startAngle: 0, endAngle: 0 },
-          { startAngle: d.startAngle, endAngle: d.endAngle }
-        );
-        return function (t) {
-          return arc(i(t)); // Animate the arc path
-        };
-      });
-
-    // Add labels with animation
-    slices
+      .duration(1000) 
+      .attr('y', d => y(d.intensity))
+      .attr('height', d => height - y(d.intensity));
+    svg.selectAll('.label')
+      .data(data)
+      .enter()
       .append('text')
-      .attr('transform', (d) => `translate(${labelArc.centroid(d)})`)
-      .attr('dy', '.35em')
-      .style('text-anchor', 'middle')
-      .text((d) => d.data.city)
-      .attr('opacity', 0) // Initial opacity is set to 0 for animation
+      .attr('class', 'label')
+      .attr('x', d => x(d.end_year) + x.bandwidth() / 2) 
+      .attr('y', height) 
+      .attr('text-anchor', 'middle')
+      .style('fill', '#333')
+      .style('font-size', '12px')
+      .text(d => d.intensity)
       .transition()
-      .duration(1000) // Duration for the animation (1 second)
-      .attr('opacity', 1); // Set opacity to 1 to make the text visible
+      .duration(1000) 
+      .attr('y', d => y(d.intensity) - 5); 
 
   }, [data]);
 
@@ -83,5 +72,4 @@ const CityPieChart = ({ data }) => {
     </div>
   );
 };
-
-export default CityPieChart;
+export default CityIndex;

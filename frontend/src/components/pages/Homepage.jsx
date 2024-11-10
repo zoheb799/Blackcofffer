@@ -13,7 +13,7 @@ import IntensityChart from "../visualisations/Intensity";
 import LikelihoodChart from "../visualisations/Likelihood";
 import RelevanceChart from "../visualisations/Relevance";
 import YearChart from "../visualisations/Year";
-import CityPieChart from "../visualisations/City";
+import CityIndex from "../visualisations/City";
 import CountryChart from "../visualisations/Country";
 import TopicsBarChart from "../visualisations/Topics";
 import axios from "axios";
@@ -61,15 +61,14 @@ const HomePage = () => {
     ...new Set(data.map((item) => item.source).filter(Boolean)),
   ];
 
-  // Fetch the data from the API when filters change
   useEffect(() => {
     const fetchData = async () => {
-      setLoading(true); // Set global loading state to true
+      setLoading(true); 
       try {
         const response = await axios.get('/api/v1/getdata', { params: filters });
         setData(response.data);
         
-        // Set all chart loading states to false once data is fetched
+        
         setLoadingCharts({
           intensity: false,
           likelihood: false,
@@ -83,7 +82,7 @@ const HomePage = () => {
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
-        setLoading(false); // Set global loading state to false after fetching
+        setLoading(false); 
       }
     };
 
@@ -109,9 +108,9 @@ const HomePage = () => {
       <Typography variant="h4">Welcome to the Home Page</Typography>
       <Typography variant="body1">This is the main dashboard.</Typography>
 
-      {/* Filter Section */}
+      
       <Box display="flex" flexWrap="wrap" gap={2} mt={3}>
-        {/* End Year Filter */}
+     
         <FormControl variant="outlined" sx={{ minWidth: 150 }}>
           <InputLabel>End Year</InputLabel>
           <Select
@@ -128,7 +127,7 @@ const HomePage = () => {
           </Select>
         </FormControl>
 
-        {/* Topic Filter */}
+     
         <FormControl variant="outlined" sx={{ minWidth: 150 }}>
           <InputLabel>Topic</InputLabel>
           <Select
@@ -145,7 +144,7 @@ const HomePage = () => {
           </Select>
         </FormControl>
 
-        {/* Sector Filter */}
+  
         <FormControl variant="outlined" sx={{ minWidth: 150 }}>
           <InputLabel>Sector</InputLabel>
           <Select
@@ -162,7 +161,7 @@ const HomePage = () => {
           </Select>
         </FormControl>
 
-        {/* Region Filter */}
+  
         <FormControl variant="outlined" sx={{ minWidth: 150 }}>
           <InputLabel>Region</InputLabel>
           <Select
@@ -179,7 +178,7 @@ const HomePage = () => {
           </Select>
         </FormControl>
 
-        {/* Source Filter */}
+   
         <FormControl variant="outlined" sx={{ minWidth: 150 }}>
           <InputLabel>Source</InputLabel>
           <Select
@@ -196,7 +195,7 @@ const HomePage = () => {
           </Select>
         </FormControl>
 
-        {/* Country Filter */}
+    
         <FormControl variant="outlined" sx={{ minWidth: 150 }}>
           <InputLabel>Country</InputLabel>
           <Select
@@ -223,7 +222,7 @@ const HomePage = () => {
             { title: "Year Chart", Chart: YearChart, key: 'year' },
             { title: "Region Chart", Chart: RegionChart, key: 'region' },
             { title: "Country Chart", Chart: CountryChart, key: 'country' },
-            { title: "City Chart", Chart: CityPieChart, key: 'city' },
+            { title: "City Chart", Chart: CityIndex, key: 'city' },
             { title: "Topics Chart", Chart: TopicsBarChart, key: 'topics' },
           ].map(({ title, Chart, key }, index) => (
             <Grid item xs={12} sm={12} lg={6} key={index}>
@@ -233,7 +232,7 @@ const HomePage = () => {
                   borderRadius: "8px",
                   boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
                   padding: "20px",
-                  minHeight: "300px", // To reserve space while loading
+                  minHeight: "300px", 
                   display: "flex",
                   flexDirection: "column",
                   alignItems: "center",
