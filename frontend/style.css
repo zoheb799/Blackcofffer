@@ -1,0 +1,28 @@
+.intensity-chart-container {
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    margin: auto;
+  }
+  
+  .tooltip {
+    position: absolute;
+    background-color: #333;
+    color: #fff;
+    padding: 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+  
+  .bar {
+    fill: #69b3a2;
+    transition: fill 0.3s ease;
+  }
+  
+  .bar:hover {
+    fill: #407f7e;
+  }
+  
